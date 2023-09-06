@@ -1,0 +1,239 @@
+HTML------------------\
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JavaScript Basics</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css"
+    />
+    <style></style>
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="kitchen-title">Welcome to our kitchen</h2>
+      <div class="kitchen-header">
+        <input
+          type="text"
+          placeholder="Enter kitchen items here"
+          id="kitchen-input"
+        />
+        <button id="add-btn">Add now</button>
+      </div>
+
+      <ul id="kitchen-items-list" class="kitchen-items-list"></ul>
+    </div>
+
+    <script src="./main.js"></script>
+  </body>
+</html>
+-----------------------------------------------------------------------------------------------
+
+css----------------------------------------
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+/* CSS Reset */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Nunito', sans-serif;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #eec0c6;
+    background-image: linear-gradient(315deg, #eec0c6 0%, #7ee8fa 74%);
+}
+
+.container{
+    max-width: 500px;
+    margin-top: 50px;
+}
+
+.kitchen-title{
+    text-align: center;
+    font-size: 30px;
+}
+
+.kitchen-header{
+    margin: 30px 0 20px;
+    display: flex;
+}
+
+.kitchen-header input{
+    height: 42px;
+    padding: 10px;
+    font-size: 18px;
+    outline: none;
+    border: none;
+}
+
+.kitchen-header button{
+    font-size: 18px;
+    height: 42px;
+    padding: 0 20px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    background-color: black;
+    color: white;
+    border: none;
+    outline: none;
+    transition: 0.3s;
+}
+
+.kitchen-header button:hover{
+    background-color: rgba(0,0,0,0.8);
+}
+
+.kitchen-items-list{
+    text-align: left;
+    list-style: none;
+    perspective: 1000px;
+}
+
+.kitchen-items-list li{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color :#ffac81;
+    background-image: linear-gradient(315deg, #ffac81 0%, #ff928b 74%);
+    padding: 10px 15px;
+    margin: 4px 0;  
+    font-size: 18px;
+    font-weight: 700;
+    color: black;
+    animation: 0.3s ease-in-out;
+    
+}
+
+.fa-trash, .fa-edit{
+    cursor: pointer;
+    background-color: white;
+    padding: 6px 10px;
+    border-radius: 7px;
+    text-align: center;
+    margin-top: 3px;
+    color: #332d2d;
+}
+
+.fa-edit{
+    margin-left: auto;
+    margin-right: 15px;
+}
+.fa-trash{
+    margin-left: auto;
+    margin-right: 15px;
+}
+/* Animate in */
+@keyframes slideIn{
+    from{
+        opacity: 0;
+        transform: rotateX(60deg) translateY(-10px);
+    }
+    to{
+        opacity: 1;
+        transform:rotateX(0deg) translateY(0px);
+    }
+}
+
+/* Animate out */
+.slideOut{
+    transform: rotateX(60deg) translateY(-10px);
+    opacity: 0;
+    transition: 0.3s;
+}
+---------------------------------------------------------------------------------------
+
+Javascript--------------------------------------
+let kitchenInput = document.getElementById("kitchen-input");
+let addBtn = document.getElementById("add-btn");
+let kitchenItemsLists = document.getElementById("kitchen-items-list");
+let kitchenInputData;
+let kitchenInputArray = [];
+
+function setElement(){
+    localStorage.setItem("kitchenInput",JSON.stringify(kitchenInputArray));
+}
+
+function getElement(){
+    if (localStorage.getItem("kitchenInput")){
+    kitchenInputData  = JSON.parse(localStorage.getItem("kitchenInput"));
+    buildUi();
+    }
+}
+function buildUi(){
+    kitchenItemsLists.textContent = "";
+    kitchenInputArray.forEach((item)=>{
+        let li = document.createElement("li");
+        let spanEle = document.createElement("span");
+        spanEle.innerText = item;
+        li.appendChild(spanEle);
+        kitchenItemsLists.appendChild(li);
+        kitchenInput.value = "";
+        kitchenInput.focus();
+        li.style.cssText = "animation-name: slideIn";
+        let trashBtm = document.createElement("i");
+        trashBtm.classList.add("fas","fa-trash");
+        li.appendChild(trashBtm);
+        let editBtn = document.createElement("i");
+        editBtn.classList.add("fas","fa-edit");
+        li.appendChild(editBtn);
+    })
+
+   }
+
+   function addKitchenItems(){
+    kitchenInputData = kitchenInput.value;
+    kitchenInputArray.push(kitchenInputData);
+    setElement();
+    getElement();
+   }
+function removeItems(event){
+  if (event.target.classList[1] === "fa-trash")
+  {
+    let item = event.target.parentElement;
+    item.classList.add("slideOut");
+    item.addEventListener("transitionend",function(){
+        console.log("finsid");
+        item.remove();
+    });
+    item.remove();
+  }
+}
+function removeItems(event){
+    if (event.target.classList[1] === "fa-trash")
+    {
+      let item = event.target.parentElement;
+      item.classList.add("slideOut");
+      item.addEventListener("transitionend",function(){
+          console.log("finsid");
+          item.remove();
+      });
+      item.remove();
+    }
+  }
+
+  function editItem(event){
+    if (event.target.classList[1] === "fa-edit")
+    {
+      let item = event.target.parentElement;
+      let value = prompt("enter the item");
+      let spanEle = item.querySelector("span");
+      spanEle.innerText = value;
+    }
+  } 
+
+addBtn.addEventListener("click", addKitchenItems);
+kitchenItemsLists.addEventListener("click",removeItems);
+kitchenItemsLists.addEventListener("click",editItem);
+getElement();
+
+--------------------------------------------------------------------------------
